@@ -6,6 +6,12 @@ Big O Notation Common Types:
 ```python
 array[0] # instant access regardless of array size
 ```
+--> Big O is always about measuring the worst case
+--> Drop constant such in O(2n) = o(n)
+--> Drop non-dominant such in: O(n -1) = O(n)
+
+LL --> is different than a list where it is located in contiguos memory locations and does not have indexes
+- the Node is (value and pointer to next value), you construct a node with dict. node = {'value': 7, 'next': {'value' = 4 , 'next' = None}}
 
 2. O(log n) - Logarithmic Time
 - Example: Binary Search
