@@ -12,6 +12,39 @@ array[0] # instant access regardless of array size
 
 LL --> is different than a list where it is located in contiguos memory locations and does not have indexes
 - the Node is (value and pointer to next value), you construct a node with dict. node = {'value': 7, 'next': {'value' = 4 , 'next' = None}}
+- **Reverse LL** is very common interview question
+
+Basic Operations:
+• Reverse a linked list (iterative and recursive)
+• Detect cycle in linked list (Floyd's algorithm)
+• Find middle of linked list
+• Remove nth node from end
+• Merge two sorted linked lists
+
+Advanced Problems:
+• Remove duplicates from sorted/unsorted list
+• Add two numbers represented as linked lists
+• Intersection of two linked lists
+• Palindrome linked list check
+• Rotate linked list by k positions
+
+Key Patterns to Master:
+• Two pointers (fast/slow)
+• Dummy head node technique
+• In-place reversal
+• Stack for comparison problems
+
+Most Frequent:
+1. Reverse Linked List - appears in 80%+ of interviews
+2. Cycle Detection - classic Floyd's tortoise and hare
+3. Merge Two Lists - tests basic pointer manipulation
+4. Remove Nth from End - two-pointer technique
+
+Pro Tips:
+• Always handle edge cases (null, single node)
+• Draw diagrams during explanation
+• Consider both iterative and recursive solutions
+• Practice with and without dummy nodes
 
 2. O(log n) - Logarithmic Time
 - Example: Binary Search
