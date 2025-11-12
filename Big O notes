@@ -14,9 +14,221 @@ LL --> is different than a list where it is located in contiguos memory location
 - the Node is (value and pointer to next value), you construct a node with dict. node = {'value': 7, 'next': {'value' = 4 , 'next' = None}}
 - **Reverse LL** is very common interview question
 
+##### Common interview Q:
+To detect the loop -> Floyd's cycle-finding algorithm (also known as the "tortoise and the hare" algorithm)
+This algorithm uses two pointers: a slow pointer and a fast pointer. The slow pointer moves one step at a time, 
+while the fast pointer moves two steps at a time. If there is a loop in the linked list, the two pointers will eventually meet at some point. 
+If there is no loop, the fast pointer will reach the end of the list.
+
+==Code:
+    def has_loop(self):
+        slow = self.head
+        fast = self.head
+        while fast is not None and fast.next is not None:
+            slow = slow.next
+            fast = fast.next.next
+            if slow == fast:
+                return True
+            
+        return False
+
+
+##### LL: Find Kth Node From End ( ** Interview Question)
+  The find_kth_from_end function should follow these requirements:
+  The function should utilize two pointers, slow and fast, initialized to the head of the linked list.
+  The fast pointer should move k nodes ahead in the list.
+  If the fast pointer becomes None before moving k nodes, the function should return None, as the list is shorter than k nodes.
+  The slow and fast pointers should then move forward in the list at the same time until the fast pointer reaches the end of the list.
+  The function should return the slow pointer, which will be at the k-th position from the end of the list.
+
+=== Code:
+def find_kth_from_end(ll, k):       
+    slow = fast = ll.head
+    for _ in range(k):
+        if fast is None:
+            return None
+        fast = fast.next
+    while fast:
+        slow = slow.next
+        fast = fast.next
+    return slow    
+
+== LL leet: Remove duplicates:
+
+You can implement the remove_duplicates() method in two different ways:
+- Using a Set - This approach will have a time complexity of O(n), where n is the number of nodes in the linked list. 
+You are allowed to use the provided Set data structure in your implementation.
+- Without using a Set - This approach will have a time complexity of O(n^2), where n is the number of nodes in the linked list. 
+You are not allowed to use any additional data structures for this implementation.
+----------------------
+Solution using nested loops:
+----------------------
+    def remove_duplicates(self):
+        current = self.head
+        while current:
+            # Start checking from the next node
+            runner = current
+            while runner.next:
+                # If the next node's value matches current's value, skip it
+                if runner.next.value == current.value:
+                    runner.next = runner.next.next
+                    self.length -= 1
+                else:
+                    runner = runner.next
+            current = current.next
+
+
+----------------------
+Solution using a set:
+----------------------
+    def remove_duplicates(self):
+            values = set()
+            previous = None
+            current = self.head
+            while current:
+                if current.value in values:
+                    previous.next = current.next
+                    self.length -= 1
+                else:
+                    values.add(current.value)
+                    previous = current
+                current = current.next
+
+----------------------
+binary_to_decimal
+----------------------
+The binary_to_decimal method should start from the head of the linked list and use each node's value to calculate the corresponding decimal number. The formula to convert a binary number to decimal is as follows:
+
+To put it in simple terms, each digit of the binary number is multiplied by 2 raised to the power equivalent to the position of the digit, counting from right to left starting from 0, and all the results are summed together to get the decimal number.
+--> For every node we encounter, we:
+  - Multiply the current num by 2. This shifts our binary number left, preparing it for the next bit. 
+    It's analogous to multiplying by 10 in decimal arithmetic.
+  - Add the value of the current node (0 or 1) to num.
+==Code:
+    def binary_to_decimal(self):
+        num = 0
+        current = self.head
+        while current:
+            num = num * 2 + current.value
+            current = current.next
+        return num
+
+----------------------
+partition_list
+----------------------
+Implement the partition_list member function for the LinkedList class, which partitions the list such that all nodes with values less than x come before nodes with values greater than or equal to x.
+Note:  This linked list class does NOT have a tail which will make this method easier to implement.
+The original relative order of the nodes should be preserved.
+
+==Code:
+    def partition_list(self, x):
+        if not self.head:
+            return None
+    
+        dummy1 = Node(0)
+        dummy2 = Node(0)
+        prev1 = dummy1
+        prev2 = dummy2
+        current = self.head
+    
+        while current:
+            if current.value < x:
+                prev1.next = current
+                prev1 = current
+            else:
+                prev2.next = current
+                prev2 = current
+            current = current.next
+    
+        prev1.next = dummy2.next
+        prev2.next = None
+    
+        self.head = dummy1.next
+
+
+----------------------
+LL: Reverse Between ( ** Interview Question)
+----------------------
+Welcome to what many consider the pinnacle of Linked List challenges 
+This exercise is not just a test of your coding skills, but also a measure of your problem-solving ability and understanding of complex data structures.
+
+Here's how you can tackle it:
+
+Visualize the Problem: Before diving into coding, grab a pen and paper. Sketch out the linked list and visualize each step of the process. This approach isn't just for beginners; it's exactly how seasoned developers plan their attack on complex problems.
+
+Seek Understanding Over Speed: Take your time to really grasp each part of the problem. The goal here is deep understanding, not just a quick solution. If you find yourself stuck, that's a part of the learning process.
+
+It's Okay to Take a Break: Feel free to step away from this challenge and return later. This course is designed to equip you with a growing set of skills, and sometimes, a bit of distance can bring new insights.
+
+Approach Like a Pro: Remember, facing a challenging problem is what being a professional developer is all about. Use this exercise to think, plan, and code like a pro.
+
+==Code:
+    def reverse_between(self, start_index, end_index):
+        if self.length <= 0:
+            return
+        
+        dum_node =Node(0)
+        dum_node.next = self.head
+        prev = dum_node
+        
+        for i in range(start_index):
+            prev = prev.next
+        
+        curr_node = prev.next
+        
+        for i in range(end_index - start_index):
+            node_to_move = curr_node.next
+            curr_node.next = node_to_move.next
+            node_to_move.next = prev.next
+            prev.next = node_to_move
+    
+--> Notice:
+You CANNOT:
+
+Move
+node_to_move = curr_node.next
+from first position because other operations depend on this value
+
+-> Put
+curr_node.next = node_to_move.next
+-> after
+node_to_move.next = prev.next
+
+because you'll lose the reference
+The reason is:
+First line must store the reference to the node we're moving
+We need to maintain proper references before changing them
+Breaking these dependencies would cause loss of node references and incorrect linking
+
+
+----------------------
+LL: Swap Nodes in Pairs
+----------------------
+
+Code:
+        while first and first.next:
+            second = first.next
+            
+            # Swap next pointers
+            previous.next = second
+            first.next = second.next
+            second.next = first
+        
+            # Move pointers
+            previous = first
+            first = first.next
+            
+        self.head = dummy.next
+
+
+
+
+
+
+
 Basic Operations:
 • Reverse a linked list (iterative and recursive)
-• Detect cycle in linked list (Floyd's algorithm)
+• Detect cycle in linked list (Floyd's algorithm) ... Floyd's cycle-finding algorithm (also known as the "tortoise and the hare" algorithm)
 • Find middle of linked list
 • Remove nth node from end
 • Merge two sorted linked lists
@@ -157,3 +369,12 @@ This knowledge is crucial for:
 4. Scaling Applications
 
 Understanding these concepts helps write efficient code that can handle large-scale applications and data processing.
+
+
+
+#### Dynamic Programming:
+* Overlapping subproblems: it means repeating subproblems .. storing the answers of subproblems is called `Memoization`.
+Dynamic programming requirements:
+ - Repeating subporblems "Overlapping subproblems"
+ - Optimized structure.
+
