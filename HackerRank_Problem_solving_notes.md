@@ -15,6 +15,6 @@ def diagonalDifference(arr):
 ```
 
 How it works:
-• Primary diagonal: elements where row index = column index arr[i][i]
-• Secondary diagonal: elements where row + column = n-1, so arr[i][n-1-i]
-• Return absolute difference between the two sums
+- Primary diagonal: elements where row index = column index arr[i][i]
+- Secondary diagonal: elements where row + column = n-1, so arr[i][n-1-i]
+- Return absolute difference between the two sums
