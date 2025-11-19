@@ -29,8 +29,8 @@ LL --> is different than a list where it is located in contiguos memory location
 - the Node is (value and pointer to next value), you construct a node with dict. node = {'value': 7, 'next': {'value' = 4 , 'next' = None}}
 - **Reverse LL** is very common interview question
 
-##### Common interview Q:
-To detect the loop -> Floyd's cycle-finding algorithm (also known as the "tortoise and the hare" algorithm)
+### Common interview Q:
+To detect the loop -> **Floyd's cycle-finding algorithm** (also known as the "tortoise and the hare" algorithm)
 This algorithm uses two pointers: a slow pointer and a fast pointer. The slow pointer moves one step at a time, 
 while the fast pointer moves two steps at a time. If there is a loop in the linked list, the two pointers will eventually meet at some point. 
 If there is no loop, the fast pointer will reach the end of the list.
