@@ -6,9 +6,24 @@ Big O Notation Common Types:
 ```python
 array[0] # instant access regardless of array size
 ```
---> Big O is always about measuring the worst case
---> Drop constant such in O(2n) = o(n)
---> Drop non-dominant such in: O(n -1) = O(n)
+- Big O is always about measuring the worst case
+- Drop constant such in O(2n) = o(n)
+- Drop non-dominant such in: O(n -1) = O(n)
+
+#### Python lists store their references in contiguous memory locations, but the actual objects may not be contiguous.
+
+How Python lists work:
+• The list structure itself is an array of pointers stored contiguously
+• Each pointer points to the actual object somewhere in memory
+• The objects themselves can be scattered anywhere
+
+#### No, linked lists are NOT stored in contiguous memory locations.
+
+How linked lists work:
+• Each node can be stored anywhere in memory
+• Nodes are connected through pointers/references
+• Memory addresses are scattered and random
+
 
 LL --> is different than a list where it is located in contiguos memory locations and does not have indexes
 - the Node is (value and pointer to next value), you construct a node with dict. node = {'value': 7, 'next': {'value' = 4 , 'next' = None}}
