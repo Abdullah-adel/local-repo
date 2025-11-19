@@ -36,6 +36,7 @@ while the fast pointer moves two steps at a time. If there is a loop in the link
 If there is no loop, the fast pointer will reach the end of the list.
 
 ==Code:
+```
     def has_loop(self):
         slow = self.head
         fast = self.head
@@ -46,7 +47,7 @@ If there is no loop, the fast pointer will reach the end of the list.
                 return True
             
         return False
-
+```
 
 ##### LL: Find Kth Node From End ( ** Interview Question)
   The find_kth_from_end function should follow these requirements:
