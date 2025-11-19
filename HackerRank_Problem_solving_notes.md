@@ -60,3 +60,64 @@ def plusMinus(arr):
     print(f"{negative/n:.6f}")
     print(f"{zero/n:.6f}")
 ```
+
+### miniMaxSum challenge
+
+python
+```
+def miniMaxSum(arr):
+    min_num = arr[0]  # Initialize with first element
+    max_num = arr[0]  # Initialize with first element
+    total_sum = 0
+    
+    for num in arr:
+        if num > max_num:
+            max_num = num
+        if num < min_num:  # Separate condition for minimum
+            min_num = num
+        total_sum += num
+    
+    min_sum = total_sum - max_num
+    max_sum = total_sum - min_num
+    print(min_sum, max_sum)
+```
+
+Even simpler approach:
+python
+```
+def miniMaxSum(arr):
+    total_sum = sum(arr)
+    min_sum = total_sum - max(arr)
+    max_sum = total_sum - min(arr)
+    print(min_sum, max_sum)
+```
+
+### Birthday Cake Candles 
+my solution:
+------------
+```
+def birthdayCakeCandles(candles):
+    tallest = max(candles)
+    counter = 0
+    for candel in candles:
+        if candel == tallest:
+            counter += 1
+    return counter
+```
+
+my simpler code:
+----------------
+ ```
+def birthdayCakeCandles(candles):
+    max_height = max(candles)
+    counter = sum( 1 for candle in candles if candle == max_height)
+    return counter
+```
+
+Even simpler:
+--------------
+python
+```
+def birthdayCakeCandles(candles):
+    return candles.count(max(candles))
+```
