@@ -58,6 +58,7 @@ If there is no loop, the fast pointer will reach the end of the list.
   The function should return the slow pointer, which will be at the k-th position from the end of the list.
 
 === Code:
+```
 def find_kth_from_end(ll, k):       
     slow = fast = ll.head
     for _ in range(k):
@@ -68,6 +69,7 @@ def find_kth_from_end(ll, k):
         slow = slow.next
         fast = fast.next
     return slow    
+```
 
 == LL leet: Remove duplicates:
 
