@@ -121,3 +121,94 @@ python
 def birthdayCakeCandles(candles):
     return candles.count(max(candles))
 ```
+============
+ #### Number Line Jumps 
+They will land on the same spot only if the difference in starting positions is divisible by the difference in speeds, and the faster one starts behind the slower one.[1][2]
+
+## Problem idea
+
+Two kangaroos start at positions $$x1$$ and $$x2$$ and jump forward with speeds $$v1$$ and $$v2$$.[3]
+After $$n$$ jumps, their positions are:
+
+- First: $$x1 + n \cdot v1$$  
+- Second: $$x2 + n \cdot v2$$[4]
+
+They meet if there is some non‑negative integer $$n$$ with:
+$$
+x1 + n \cdot v1 = x2 + n \cdot v2
+$$
+Rearrange:
+$$
+n = \frac{x2 - x1}{v1 - v2}
+$$
+[4]
+
+For them to meet:
+- $$v1 \ne v2$$ (otherwise distances never change).[2]
+- $$x2 - x1$$ is divisible by $$v1 - v2$$ (so $$n$$ is an integer).[1]
+- $$n \ge 0$$, meaning the one behind must be faster.[2]
+
+***
+
+## Simple math-based Python solution
+
+```python
+def kangaroo(x1, v1, x2, v2):
+    # If speeds are equal, they only meet if they start together
+    if v1 == v2:
+        return "YES" if x1 == x2 else "NO"
+    
+    # Compute n = (x2 - x1) / (v1 - v2)
+    diff_pos = x2 - x1
+    diff_vel = v1 - v2
+    
+    # They must move towards each other and meet at an integer step
+    if diff_pos % diff_vel == 0 and diff_pos / diff_vel >= 0:
+        return "YES"
+    else:
+        return "NO"
+```
+
+Explanation in words:
+
+- If speeds same:  
+  - same start → always together → "YES"  
+  - different start → distance never changes → "NO".[2]
+- Otherwise, check if the division gives a whole, non‑negative number of jumps.
+
+***
+
+## Simple simulation solution (loop)
+
+This is easier to think about, but slower (fine for HackerRank constraints).[5]
+
+```python
+def kangaroo(x1, v1, x2, v2):
+    # Limit jumps so we don't loop forever
+    for _ in range(10000):
+        if x1 == x2:
+            return "YES"
+        x1 += v1
+        x2 += v2
+    return "NO"
+```
+
+Explanation:
+
+- Move both forward one jump at a time.  
+- If positions ever match → "YES"; if not after many jumps → assume "NO".[5]
+
+***
+
+## Very short Python solution
+
+This is just the math version written compactly.
+
+```python
+def kangaroo(x1, v1, x2, v2):
+    return "YES" if (v1 != v2 and (x2 - x1) % (v1 - v2) == 0 and (x2 - x1) / (v1 - v2) >= 0) or (x1 == x2 and v1 == v2) else "NO"
+```
+
+You can use the math-based version in contests and the loop version to understand the behaviour step by step.
+
+
