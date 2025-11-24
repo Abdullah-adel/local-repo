@@ -211,4 +211,63 @@ def kangaroo(x1, v1, x2, v2):
 
 You can use the math-based version in contests and the loop version to understand the behaviour step by step.
 
+#### "Between Two Sets"  challenge
+Here's a simple beginner-friendly solution for the "Between Two Sets" problem without using extra functions or the functools module:
+
+### Explanation
+
+- Find the maximum number in array `a` (call it `max_a`).
+- Find the minimum number in array `b` (call it `min_b`).
+- Check every number `x` from `max_a` up to `min_b`.
+- For each `x`, check if:
+  1. All elements in `a` divide `x` evenly.
+  2. `x` divides all elements in `b` evenly.
+- Count how many such numbers satisfy both conditions.
+
+### Simple Code Example in Python
+
+```python
+def getTotalX(a, b):
+    max_a = max(a)
+    min_b = min(b)
+    count = 0
+
+    for x in range(max_a, min_b + 1):
+        # Check if all elements in a divide x
+        divisible_by_a = True
+        for num in a:
+            if x % num != 0:
+                divisible_by_a = False
+                break
+        
+        if not divisible_by_a:
+            continue
+        
+        # Check if x divides all elements in b
+        divides_b = True
+        for num in b:
+            if num % x != 0:
+                divides_b = False
+                break
+        
+        if divides_b:
+            count += 1
+    
+    return count
+
+# Example usage:
+a = [2, 4]
+b = [16, 32, 96]
+print(getTotalX(a, b))  # Output: 3
+```
+
+### How it works
+
+- Start at the biggest number in `a` since smaller numbers can't satisfy the first condition if bigger numbers in `a` don't.
+- Go up to the smallest number in `b` because numbers bigger than that can't divide all elements in `b`.
+- For each candidate number, check both conditions with loops and count how many pass.
+
+This approach is straightforward and good for beginners learning loops and conditionals.[1]
+
+[1](https://studyalgorithms.com/array/hackerrank-between-two-sets/)
 
