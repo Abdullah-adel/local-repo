@@ -271,3 +271,26 @@ This approach is straightforward and good for beginners learning loops and condi
 
 [1](https://studyalgorithms.com/array/hackerrank-between-two-sets/)
 
+#### Subarray Division challenge
+
+```
+def birthday(s, d, m):
+    count = 0
+    for i in range(len(s) - m + 1):
+        if sum(s[i:i+m]) == d:
+            count += 1
+    return count
+```
+
+Logic:
+- Check each possible subarray of length m
+- Count how many subarrays sum to d
+- range(len(s) - m + 1) ensures we don't go out of bounds
+
+Example: s=[2,2,1,3,2], d=4, m=2
+- Check [2,2] → sum=4 ✓
+- Check [2,1] → sum=3 ✗
+- Check [1,3] → sum=4 ✓
+- Check [3,2] → sum=5 ✗
+- Result: 2 valid subarrays
+
