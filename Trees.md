@@ -34,5 +34,23 @@ Here's a complete and clear graphic explanation of tree data structures with all
 - **Full Binary Tree**: Each node has either 0 or 2 children.
 - **Complete Binary Tree**: All levels except possibly the last are fully filled, and nodes are as left as possible.
 
-This picture and terms cover the essential concepts for understanding tree data structures, useful for programming and algorithm study.[2][3][6][11]
 
+A **Binary Search Tree (BST)** is a special type of binary tree where each node contains a unique key and follows a strict ordering rule:
+
+- All nodes in the left subtree of a node have values **less than** the node’s value.
+- All nodes in the right subtree of a node have values **greater than** the node’s value.
+
+### Key Characteristics of BST:
+- Each node has at most two children (left and right).
+- This order property holds true for every node recursively.
+- It supports efficient searching, insertion, and deletion because of this ordering.
+- The average time complexity for these operations is $$O(\log n)$$ if the tree is balanced.
+
+### How Searching Works:
+- Start at the **root**.
+- If the target value is less than the current node’s value, move to the **left child**.
+- If the target is greater, move to the **right child**.
+- Repeat until you find the value or hit a leaf node.
+
+### Summary:
+BSTs maintain a dynamic sorted structure making search-related operations faster than scanning an unordered collection. They are foundational for advanced balanced trees like AVL and Red-Black trees. The recursive structure of BSTs also makes them suitable for divide-and-conquer algorithms. BSTs are extensively used in databases, indexing, and many algorithmic problems.
