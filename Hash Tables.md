@@ -10,13 +10,13 @@ How it works:
 - No searching through every shelf
 
 Real Example:
-python
+```
 phone_book = {
     "John": "555-1234",
     "Mary": "555-5678", 
     "Bob": "555-9999"
 }
-
+```
 # Instant lookup - no searching needed
 print(phone_book["Mary"])  # Gets 555-5678 immediately
 
@@ -72,10 +72,11 @@ def hash_function(key, array_size):
 Collision Handling:
 
 1. Chaining (Separate Chaining)
+```
 Index 0: → [("John", "555-1234")] → [("Jane", "555-4321")]
 Index 1: → [("Mary", "555-5678")]
 Index 2: → [("Bob", "555-9999")]
-
+```
 
 2. Open Addressing
 - Linear Probing: If slot occupied, try next slot
@@ -160,7 +161,7 @@ When load factor gets too high, the hash table "builds a bigger parking lot" (re
 3 Most Common Hash Table Coding Problems:
 
 1. Two Sum
-python
+```
 def twoSum(nums, target):
     seen = {}
     for i, num in enumerate(nums):
@@ -168,10 +169,11 @@ def twoSum(nums, target):
         if complement in seen:
             return [seen[complement], i]
         seen[num] = i
-
+```
 
 2. First Non-Repeating Character
-python
+
+```
 def firstUniqChar(s):
     count = {}
     for char in s:
@@ -180,10 +182,10 @@ def firstUniqChar(s):
         if count[char] == 1:
             return i
     return -1
-
+```
 
 3. Group Anagrams
-python
+```
 def groupAnagrams(strs):
     groups = {}
     for s in strs:
@@ -192,7 +194,7 @@ def groupAnagrams(strs):
             groups[key] = []
         groups[key].append(s)
     return list(groups.values())
-
+```
 
 These problems test hash table fundamentals: lookups, counting, and grouping patterns.
 
