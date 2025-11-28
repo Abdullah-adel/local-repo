@@ -1,12 +1,48 @@
+
+> Sorting a string in Python:
+
+Method 1: Using sorted() (most common)
+python
+s = "hello"
+sorted_string = ''.join(sorted(s))  # "ehllo"
+
+
+Method 2: Convert to list, sort, join back
+python
+s = "hello"
+char_list = list(s)
+char_list.sort()
+sorted_string = ''.join(char_list)  # "ehllo"
+
+
+Method 3: Reverse order
+python
+s = "hello"
+sorted_string = ''.join(sorted(s, reverse=True))  # "ollhe"
+
+
+Most common and simple:
+python
+sorted_string = ''.join(sorted(original_string))
+
+
+Key points:
+- sorted() returns a list of characters
+- ''.join() combines them back into a string
+- Sorts alphabetically by default
+- Case-sensitive (uppercase comes before lowercase)
+
+
 ## first challenge, Bad runtime :) 
 
 #### is this the better solution for leet code challenge Two sum: class Solution:
+   ```
     def twoSum(self, nums: List[int], target: int) -> List[int]:
         for num1 in range(len(nums) - 1):
             for num2 in range(num1+1, len(nums)):
                 if nums[num1] + nums[num2] == target:
                     return [num1, num2]
-
+```
 > Your solution works but is not optimal. It's O(n²) time complexity.
 
 Better optimized solution using hash map: O(n)
