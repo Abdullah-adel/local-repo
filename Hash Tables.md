@@ -316,5 +316,55 @@ def group_anagrams(strings):
  
     # convert the hash table to a list of lists
     return list(anagram_groups.values())   #### Notice how we got the list of values in a dict
-    ```
+```
+
+### Find_pairs leetcode challenge:
+
+> for this code:
+```
+def find_pairs(arr1, arr2, target):
+    set1 = set(arr1)
+    pairs = []
+    for num in arr2:
+        complement = target - num
+        if complement in set1:
+            pairs.append((complement, num))
+    return pairs   ... is it mandatory to do set1 = set(arr1)
+```
+
+> No, it's not mandatory, but it's highly recommended for performance.
+
+Without set conversion (slower):
+```
+def find_pairs(arr1, arr2, target):
+    pairs = []
+    for num in arr2:
+        complement = target - num
+        if complement in arr1:  # O(n) lookup in list
+            pairs.append((complement, num))
+    return pairs
+```
+
+With set conversion (faster):
+```
+def find_pairs(arr1, arr2, target):
+    set1 = set(arr1)  # O(n) conversion
+    pairs = []
+    for num in arr2:
+        complement = target - num
+        if complement in set1:  # O(1) lookup in set
+            pairs.append((complement, num))
+    return pairs
+```
+
+Performance difference:
+- **Without set**: O(n × m) where n = len(arr2), m = len(arr1)
+- **With set**: O(n + m) 
+
+When set conversion matters:
+- Large arrays: Huge performance difference
+- Small arrays: Minimal difference, either works
+
+Bottom line: Use set(arr1) for better performance, especially with larger datasets. The in operator is much faster on sets than lists.
+
 
