@@ -294,3 +294,76 @@ Example: s=[2,2,1,3,2], d=4, m=2
 - Check [3,2] → sum=5 ✗
 - Result: 2 valid subarrays
 
+## Check the points I miss regularyly,, like increment a vvalue in dict by 1 every iteration and checking max and min key/values in a dict:
+
+> check my code and tell me how efficint it is and how can be optimized more:
+> problem description: Given an array of bird sightings where every element represents a bird type id, determine the id of the most frequently sighted type. If more than 1 type has been spotted that maximum amount, return the smallest of their ids.
+
+```
+def migratoryBirds(arr):
+    birds_count = {}
+    for bird in arr :
+        if bird in birds_count:
+            birds_count[bird] += 1
+        else:
+            birds_count[bird] = 1
+    max_count = max(birds_count.values())
+    result = min(key for key,val in birds_count.items() if val == max_count)
+    return result
+```
+> Your code is correct and reasonably efficient but can be optimized.
+
+Current efficiency: O(n) time, O(k) space where k = unique birds
+
+Optimizations:
+
+1. Use get() method (cleaner counting):
+
+```
+def migratoryBirds(arr):
+    birds_count = {}
+    for bird in arr:
+        birds_count[bird] = birds_count.get(bird, 0) + 1
+    
+    max_count = max(birds_count.values())
+    return min(key for key, val in birds_count.items() if val == max_count)
+```
+
+2. Use Counter (most Pythonic):
+> Counter automatically counts occurrences of items in an iterable.
+```
+from collections import Counter
+
+def migratoryBirds(arr):
+    birds_count = Counter(arr)
+    max_count = max(birds_count.values())
+    return min(key for key, val in birds_count.items() if val == max_count)
+```
+
+
+3. Single pass optimization:
+```
+def migratoryBirds(arr):
+    birds_count = {}
+    max_count = 0
+    result = float('inf')
+    
+    for bird in arr:
+        birds_count[bird] = birds_count.get(bird, 0) + 1
+        count = birds_count[bird]
+        
+        if count > max_count or (count == max_count and bird < result):
+            max_count = count
+            result = bird
+    
+    return result
+```
+
+
+Performance comparison:
+- **Your code**: O(n) + O(k) + O(k) = O(n)
+- **Single pass**: O(n) - eliminates extra passes
+- **Counter**: Same complexity but cleaner code
+
+Best choice: Counter version for readability, single pass for maximum efficiency.
+
