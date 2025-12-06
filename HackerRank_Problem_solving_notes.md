@@ -420,3 +420,9 @@ Improvements:
 - More descriptive variable names
 - Cleaner leap year logic
 
+#### General rule:
+- **Return** when you need the value for further processing
+- **Print** when you need to display output to user (like HackerRank problems)
+
+HackerRank judges expect specific console output format, not return values.
+
