@@ -80,11 +80,11 @@ The hash map approach is the standard optimal solution for Two Sum.
 > isPalindrome for strings (ignoring case and non-alphanumeric):
 
 Method 1: Clean then compare
-``
+```
 def isPalindrome(s: str) -> bool:
     cleaned = ''.join(char.lower() for char in s if char.isalnum())
     return cleaned == cleaned[::-1]
-``
+```
 
 Method 2: Two pointers (more efficient)
 ```
