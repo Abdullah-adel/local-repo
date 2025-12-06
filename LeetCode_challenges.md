@@ -75,3 +75,53 @@ Example: nums=[2,7,11,15], target=9
 
 The hash map approach is the standard optimal solution for Two Sum.
 
+> how to solve isPalindrome for the above
+
+> isPalindrome for strings (ignoring case and non-alphanumeric):
+
+Method 1: Clean then compare
+`
+def isPalindrome(s: str) -> bool:
+    cleaned = ''.join(char.lower() for char in s if char.isalnum())
+    return cleaned == cleaned[::-1]
+`
+
+Method 2: Two pointers (more efficient)
+```
+def isPalindrome(s: str) -> bool:
+    left, right = 0, len(s) - 1
+    
+    while left < right:
+        # Skip non-alphanumeric from left
+        while left < right and not s[left].isalnum():
+            left += 1
+        
+        # Skip non-alphanumeric from right
+        while left < right and not s[right].isalnum():
+            right -= 1
+        
+        # Compare characters
+        if s[left].lower() != s[right].lower():
+            return False
+        
+        left += 1
+        right -= 1
+    
+    return True
+```
+
+Most simple and readable:
+```
+def isPalindrome(s: str) -> bool:
+    cleaned = ''.join(char.lower() for char in s if char.isalnum())
+    return cleaned == cleaned[::-1]
+```
+
+Example:
+```
+isPalindrome("A man, a plan, a canal: Panama")  # True
+isPalindrome("race a car")                       # False
+```
+
+### The first method is cleaner and easier to understand, while the second is more memory efficient.
+
