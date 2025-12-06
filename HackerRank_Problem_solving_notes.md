@@ -367,3 +367,56 @@ Performance comparison:
 
 Best choice: Counter version for readability, single pass for maximum efficiency.
 
+> is this the best pythonic coding:
+```
+def dayOfProgrammer(year):
+    day = 0
+    if year % 4 == 0:
+        day = 256 - 244
+    else:
+        day = 256 - 243
+    result = str(day)+'.09.'+str(year)
+    return result
+```
+> Your code works but has some issues and isn't the most Pythonic. Here are the problems and improvements:
+
+Issues with your code:
+1. Incomplete leap year logic - doesn't handle century years correctly
+2. Missing Julian calendar handling for years before 1918
+3. Magic numbers (244, 243) without explanation
+4. Unnecessary variable assignments
+
+More Pythonic version:
+```
+def dayOfProgrammer(year):
+    if year == 1918:  # Calendar transition year
+        return f"26.09.{year}"
+    
+    # Determine if leap year
+    if year < 1918:  # Julian calendar
+        is_leap = year % 4 == 0
+    else:  # Gregorian calendar
+        is_leap = year % 400 == 0 or (year % 4 == 0 and year % 100 != 0)
+    
+    # Calculate day (256 - days in Jan-Aug)
+    day = 256 - (244 if is_leap else 243)
+    return f"{day}.09.{year}"
+```
+
+Even more concise:
+```
+def dayOfProgrammer(year):
+    if year == 1918:
+        return f"26.09.{year}"
+    
+    is_leap = (year % 400 == 0 or (year % 4 == 0 and year % 100 != 0)) if year > 1918 else year % 4 == 0
+    day = 13 if is_leap else 12
+    return f"{day}.09.{year}"
+```
+
+Improvements:
+- Uses f-strings (more Pythonic than string concatenation)
+- Handles all calendar rules correctly
+- More descriptive variable names
+- Cleaner leap year logic
+
