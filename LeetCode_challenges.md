@@ -86,7 +86,7 @@ def isPalindrome(s: str) -> bool:
     return cleaned == cleaned[::-1]
 ```
 
-Method 2: Two pointers (more efficient)
+### Method 2: Two pointers (more efficient)
 ```
 def isPalindrome(s: str) -> bool:
     left, right = 0, len(s) - 1
