@@ -1,5 +1,16 @@
 > Explain Recursion and rBST data structure simply and technically with use cases and o(n), share the most common 5 interview questions and 3 common interview coding with small context for each challenge related to Recursion and rBST with the ideal answers
 
+Recursion:  we can define it as a funtion that calls itself ...... until it does not
+    Psudo Ex: open_gift_box() ... each it we open the box we make the problem smaller
+
+    Call stacks
+
+    Base Case: when you resolve the issue and return something
+    Recursive Case: when you can recalling the function again 
+
+    Stack OverFlow: when the fn calls itself again and again without having a base case that stops it from calling itself
+        Like when you have a complex if-statement condition that is never going to be true
+
 
 > Recursion
 
