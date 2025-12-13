@@ -127,3 +127,11 @@ I found a list of Blind 75 Leetcode problems. if you want to practice more quest
 
 ## Important Link:
 [14 Patterns to Ace Any Coding Interview Question](https://hackernoon.com/14-patterns-to-ace-any-coding-interview-question-c5bb3357f6ed)
+
+[Critical Tips to Learn Programming Faster | HackerNoon](https://hackernoon.com/critical-tips-to-learn-programming-faster)
+
+[How NOT to succeed in your 45-minute coding interview | HackerNoon](https://hackernoon.com/how-not-to-succeed-in-your-45-minute-coding-interview-2eebd46bd6ec)
+
+[Anatomy of a System Design Interview | HackerNoon](https://hackernoon.com/anatomy-of-a-system-design-interview-4cb57d75a53f)
+
+[The Top 10 Object-Oriented Design Interview Questions Developers Should Know | HackerNoon](https://hackernoon.com/the-top-10-object-oriented-design-interview-questions-developers-should-know-c7fc2e13ce39)
