@@ -28,3 +28,24 @@ class Solution:
                 profit = prices[i] - buy
         return profit
 ```
+### Product of Array Except Self:
+You can solve “Product of Array Except Self” in O(n) using prefix and suffix products, without division. The main idea is: for each index i, multiply “product of all elements to the left of i” with “product of all elements to the right of i”.
+```
+def productExceptSelf(nums):
+    n = len(nums)
+    ans = [1] * n
+
+    # Left pass: ans[i] = product of all elements to the left of i
+    left = 1
+    for i in range(n):
+        ans[i] = left
+        left *= nums[i]
+
+    # Right pass: multiply by product of all elements to the right of i
+    right = 1
+    for i in range(n - 1, -1, -1):
+        ans[i] *= right
+        right *= nums[i]
+
+    return ans
+```
