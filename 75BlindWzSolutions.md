@@ -69,7 +69,7 @@ def maxSubArray(self, nums: List[int]) -> int:
 Key insight: At each position, decide whether to:
 1. Start a new subarray from current element
 2. Extend the existing subarray
-
+```
 Example: [-2, 1, -3, 4, -1, 2, 1, -5, 4]
 
 i=1: current_sum = max(1, -2+1) = 1,     max_sum = 1
@@ -83,5 +83,5 @@ i=8: current_sum = max(4, 1+4) = 5,      max_sum = 6
 
 
 Result: 6 (subarray [4, -1, 2, 1])
-
+```
 ## This is Kadane's algorithm - O(n) time, O(1) space.
