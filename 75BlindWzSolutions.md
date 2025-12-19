@@ -85,3 +85,61 @@ i=8: current_sum = max(4, 1+4) = 5,      max_sum = 6
 Result: 6 (subarray [4, -1, 2, 1])
 ```
 ## This is Kadane's algorithm - O(n) time, O(1) space.
+-------------
+
+### Maximum Product Subarray
+
+```
+class Solution:
+    def maxProduct(self, nums: List[int]) -> int:
+        max_product = min_product = result = nums[0]
+
+        for i in range(1, len(nums)):
+            if nums[i] < 0 :
+                min_product, max_product = max_product , min_product
+            min_product = min(nums[i], min_product * nums[i])
+            max_product = max(nums[i], max_product * nums[i])
+            result = max(result, max_product)
+
+        return result
+```
+
+> Let me trace through nums = [2, 3, -2, 4] step by step:
+```
+## Initial state:
+max_prod = 2, min_prod = 2, result = 2
+
+
+## Step 1: nums[1] = 3
+nums[i] = 3 (positive, no swap needed)
+max_prod = max(3, 2 * 3) = max(3, 6) = 6
+min_prod = min(3, 2 * 3) = min(3, 6) = 3  
+result = max(2, 6) = 6
+
+
+## Step 2: nums[2] = -2
+nums[i] = -2 (negative, so swap max_prod and min_prod)
+Before swap: max_prod = 6, min_prod = 3
+After swap:  max_prod = 3, min_prod = 6
+
+max_prod = max(-2, 3 * -2) = max(-2, -6) = -2
+min_prod = min(-2, 6 * -2) = min(-2, -12) = -12
+result = max(6, -2) = 6
+
+
+## Step 3: nums[3] = 4  
+nums[i] = 4 (positive, no swap needed)
+max_prod = max(4, -2 * 4) = max(4, -8) = 4
+min_prod = min(4, -12 * 4) = min(4, -48) = -48
+result = max(6, 4) = 6
+
+
+## Final result: 6
+```
+Why we swap on negative numbers:
+- Before -2: we had max_prod=6 (from 2×3)
+- After swap: min_prod=6, so when we multiply by -2, we get 6×(-2)=-12
+- This -12 becomes our new minimum, which could become maximum if we hit another negative
+
+The maximum subarray product is 6 (from subarray [2,3]).
+
