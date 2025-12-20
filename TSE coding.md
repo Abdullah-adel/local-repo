@@ -1420,5 +1420,369 @@ Example: extract a file path like `/var/log/app/error.log`
 
 ---
 
+Sure — below are the **full Python codes** for **Problem 4** and **Problem 5**, with **major block comments** (and a few small inline comments where it really helps). Both are written to be **streaming-friendly** and interview-appropriate.
+
+---
+
+## Problem 4 — Find top K largest files and top K largest directories
+
+```python
+import os
+import heapq
+from pathlib import Path
+from typing import List, Tuple
+
+
+# -----------------------------
+# Helper: keep only Top-K items
+# -----------------------------
+def push_top_k(heap: List[Tuple[int, str]], item: Tuple[int, str], k: int) -> None:
+    """
+    Maintain a min-heap that keeps only the K largest (size, path) items.
+
+    heap: min-heap of (size, path)
+    item: (size, path)
+    k: how many largest items to keep
+
+    Why this works:
+    - heap[0] is always the smallest among the kept items
+    - if new item is bigger than heap[0], it belongs in top K
+    """
+    if k <= 0:
+        return
+
+    if len(heap) < k:
+        heapq.heappush(heap, item)
+    else:
+        # Replace smallest of top-K if the new item is bigger
+        if item[0] > heap[0][0]:
+            heapq.heapreplace(heap, item)
+
+
+# --------------------------------------------------------
+# Problem 4: largest files + largest directories (recursive)
+# --------------------------------------------------------
+def find_space_hogs(root_path: str, k: int = 10):
+    """
+    Return:
+      - top K largest files (size, path)
+      - top K largest directories by recursive total (size, path)
+
+    STREAMING NOTES:
+    - We do NOT read file contents.
+    - We only read metadata (stat().st_size).
+    - We traverse directories using os.scandir() which yields entries one-by-one.
+
+    Directory size calculation approach:
+    - Post-order traversal (process children first, then add child totals into parent).
+    - Implemented using a stack with a 'done' flag.
+    """
+    root = Path(root_path)
+
+    # Heap of top K files: keep (size, path)
+    top_files: List[Tuple[int, str]] = []
+
+    # Map: directory_path -> total size of files under it (recursive)
+    dir_sizes = {}
+
+    # Stack entries: (path, done_flag)
+    # - done_flag=False: first time we see the directory (we will push children)
+    # - done_flag=True: children have been processed; now we can "roll up" into parent
+    stack = [(root, False)]
+
+    while stack:
+        current, done = stack.pop()
+
+        # Safety: avoid symlink loops (and also handle filesystem race/permission issues)
+        try:
+            if current.is_symlink():
+                continue
+        except OSError:
+            continue
+
+        # Only directories participate in directory size calculation
+        if not current.is_dir():
+            continue
+
+        if not done:
+            # ---------------------------------------
+            # FIRST PASS (enter directory):
+            # 1) push (current, True) so we come back later
+            # 2) scan children and push subdirs to stack
+            # 3) add file sizes directly to current
+            # ---------------------------------------
+            stack.append((current, True))
+            dir_sizes.setdefault(str(current), 0)
+
+            try:
+                with os.scandir(current) as it:
+                    for entry in it:
+                        # Skip symlinks by default to avoid cycles
+                        if entry.is_symlink():
+                            continue
+
+                        if entry.is_dir(follow_symlinks=False):
+                            stack.append((Path(entry.path), False))
+
+                        elif entry.is_file(follow_symlinks=False):
+                            try:
+                                size = entry.stat().st_size  # metadata only
+                            except OSError:
+                                continue
+
+                            # Track top K files
+                            push_top_k(top_files, (size, entry.path), k)
+
+                            # Add file size to the current directory's total (children roll up later)
+                            dir_sizes[str(current)] += size
+
+            except OSError:
+                # Permission denied, directory disappeared, etc.
+                continue
+
+        else:
+            # ---------------------------------------
+            # SECOND PASS (exit directory):
+            # All children totals are already computed.
+            # Now roll up current directory's total into its parent.
+            # ---------------------------------------
+            if str(current) == str(root):
+                continue  # don't roll root into parent outside root scope
+
+            parent = current.parent
+            dir_sizes.setdefault(str(parent), 0)
+            dir_sizes[str(parent)] += dir_sizes.get(str(current), 0)
+
+    # After traversal, pick Top K directories
+    top_dirs: List[Tuple[int, str]] = []
+    for dpath, total_size in dir_sizes.items():
+        push_top_k(top_dirs, (total_size, dpath), k)
+
+    # Sort descending for friendly output
+    top_files_sorted = sorted(top_files, reverse=True)
+    top_dirs_sorted = sorted(top_dirs, reverse=True)
+
+    return top_files_sorted, top_dirs_sorted
+
+
+if __name__ == "__main__":
+    # Example usage:
+    files, dirs = find_space_hogs("/var/log", k=10)
+
+    print("Top files:")
+    for size, path in files:
+        print(size, path)
+
+    print("\nTop directories:")
+    for size, path in dirs:
+        print(size, path)
+```
+
+---
+
+## Problem 5 — Dedupe files (replace duplicates with symlinks), crash-safe, resumable
+
+```python
+import os
+import json
+import hashlib
+from pathlib import Path
+from typing import Dict, Any
+
+
+# -----------------------------
+# Block A: Hashing (streaming)
+# -----------------------------
+CHUNK_SIZE = 1024 * 1024  # 1MB
+
+
+def hash_file(path: Path) -> str:
+    """
+    Compute a strong content hash of a file.
+
+    STREAMING NOTE:
+    - Reads the file in chunks (1MB each).
+    - Does NOT load the full file into memory.
+    """
+    h = hashlib.blake2b()
+
+    with path.open("rb") as f:
+        while True:
+            chunk = f.read(CHUNK_SIZE)
+            if not chunk:
+                break
+            h.update(chunk)
+
+    return h.hexdigest()
+
+
+# -----------------------------------------
+# Block B: Checkpointing (resume after crash)
+# -----------------------------------------
+def load_state(state_path: Path) -> Dict[str, Any]:
+    """
+    Load state from JSON checkpoint.
+    If it doesn't exist, return an empty state.
+
+    State fields:
+    - processed: list of file paths already processed
+    - canon_by_hash: dict mapping hash -> canonical file path
+    """
+    if not state_path.exists():
+        return {"processed": [], "canon_by_hash": {}}
+
+    with state_path.open("r", encoding="utf-8") as f:
+        return json.load(f)
+
+
+def save_state(state_path: Path, state: Dict[str, Any]) -> None:
+    """
+    Save state safely using atomic replace:
+    - write to .tmp
+    - os.replace() swaps it atomically
+
+    This avoids corrupting the checkpoint if a crash happens mid-write.
+    """
+    tmp = state_path.with_suffix(".tmp")
+    with tmp.open("w", encoding="utf-8") as f:
+        json.dump(state, f)
+
+    os.replace(tmp, state_path)  # atomic on most filesystems
+
+
+# ----------------------------------------------------
+# Block C: Replace duplicate file with a symlink safely
+# ----------------------------------------------------
+def replace_with_symlink(duplicate_path: Path, canonical_path: Path) -> None:
+    """
+    Replace duplicate_path with a symlink pointing to canonical_path.
+
+    CRASH-SAFE PATTERN:
+    1) Create a temp symlink
+    2) Atomically replace duplicate_path with that temp symlink
+
+    Why safe:
+    - If crash before replace: original file still exists
+    - If crash after replace: symlink already in place
+    """
+    tmp_link = duplicate_path.with_name(duplicate_path.name + ".dedupe_tmp")
+
+    # Cleanup leftover temp if exists (from previous crashed run)
+    if tmp_link.exists():
+        tmp_link.unlink()
+
+    # Create temp symlink pointing to canonical
+    os.symlink(str(canonical_path), str(tmp_link))
+
+    # Atomically replace the duplicate with the symlink
+    os.replace(str(tmp_link), str(duplicate_path))
+
+
+# ------------------------------------------
+# Block D: Main dedupe logic (traversal + DS)
+# ------------------------------------------
+def dedupe_tree(root_dir: str, state_file: str = "dedupe_state.json") -> None:
+    """
+    Dedupe all files under root_dir:
+    - Duplicate = same content hash
+    - Keep first occurrence as canonical
+    - Replace later duplicates with symlinks to canonical
+
+    RESUMABLE:
+    - Uses a JSON checkpoint to skip already processed files on restart.
+
+    STREAMING:
+    - Traverses the directory tree without storing all files in memory
+    - Hashes each file by reading chunks
+    """
+    root = Path(root_dir)
+    state_path = Path(state_file)
+
+    # Load checkpoint state (resume)
+    state = load_state(state_path)
+    processed = set(state["processed"])           # fast membership checks
+    canon_by_hash: Dict[str, str] = state["canon_by_hash"]
+
+    # Iterative DFS traversal stack (avoid recursion depth issues)
+    stack = [root]
+
+    while stack:
+        current = stack.pop()
+
+        # Skip symlinks to avoid loops
+        try:
+            if current.is_symlink():
+                continue
+        except OSError:
+            continue
+
+        # If directory: push children and continue
+        if current.is_dir():
+            try:
+                for child in current.iterdir():
+                    stack.append(child)
+            except OSError:
+                continue
+            continue
+
+        # Process only regular files
+        if not current.is_file():
+            continue
+
+        path_str = str(current)
+
+        # Resume: skip if already processed
+        if path_str in processed:
+            continue
+
+        # (Optional but common optimization) size check first (cheap)
+        # We still compute hash for correctness, but size helps you discuss performance.
+        try:
+            _size = current.stat().st_size
+        except OSError:
+            continue
+
+        # Compute content hash (streaming)
+        try:
+            h = hash_file(current)
+        except OSError:
+            continue
+
+        # Decide canonical vs duplicate
+        if h not in canon_by_hash:
+            # First time this content appears -> canonical file
+            canon_by_hash[h] = path_str
+        else:
+            canonical_path = Path(canon_by_hash[h])
+
+            # If canonical missing (moved/deleted), make current canonical
+            if not canonical_path.exists():
+                canon_by_hash[h] = path_str
+            else:
+                # Replace duplicate with symlink (safe)
+                try:
+                    replace_with_symlink(current, canonical_path)
+                except OSError:
+                    # permission denied, cross-filesystem quirks, etc.
+                    pass
+
+        # Mark processed + checkpoint
+        processed.add(path_str)
+
+        # Simple + safe: checkpoint after each file.
+        # (Optimization: save every N files for speed)
+        state["processed"] = list(processed)
+        state["canon_by_hash"] = canon_by_hash
+        save_state(state_path, state)
+
+
+if __name__ == "__main__":
+    # Example usage:
+    # dedupe_tree("/home/user/data", state_file="dedupe_state.json")
+    pass
+```
+
+---
+
 
 
