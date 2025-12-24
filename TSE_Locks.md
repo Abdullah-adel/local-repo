@@ -328,7 +328,130 @@ Used in:
 📌 Kernel doesn’t expose monitors directly, but **many user-space designs rely on them**
 
 ---
+---
 
+# 6️⃣ Semaphore — deeper than “counter”
+
+### What semaphore controls
+
+* **Access to resources**, not ownership
+
+### Mental model
+
+> “How many can enter at once?”
+
+### Example
+
+* DB connections pool (N = 10)
+* Only 10 threads can proceed
+
+### Why semaphores are risky
+
+* Easy to misuse
+* Harder to reason than mutexes
+
+---
+
+# 7️⃣ Monitor — the structured approach
+
+### What monitor gives you
+
+* Mutual exclusion
+* Condition-based waiting
+
+### Why it exists
+
+Developers kept:
+
+* Forgetting to lock
+* Forgetting to signal
+
+Monitor enforces:
+
+* Lock is always held
+* Conditions are explicit
+
+### Where you see it
+
+* Java `synchronized`
+* High-level concurrency frameworks
+
+### Key insight
+
+> Monitors make concurrency safer by design, not discipline.
+
+# 1️⃣2️⃣ Semaphores — counting access
+
+## Mental model
+
+Imagine **10 parking spots**.
+
+Semaphore count = 10.
+
+* Each car enters → count--
+* If count = 0 → wait
+* Car leaves → count++
+
+---
+
+## Why semaphore exists
+
+* Control resource pools
+* Not about ownership
+* About **capacity**
+
+---
+
+### 🧠 Mindset
+
+> Semaphore controls **how many**, not **who**.
+
+---
+
+# 1️⃣3️⃣ Monitor — structured safety
+
+Developers kept:
+
+* Forgetting to lock
+* Forgetting to unlock
+* Forgetting to notify
+
+Monitor enforces:
+
+* Lock always held
+* Conditions explicit
+
+---
+
+## Monitor =
+
+```text
+Mutex
++ condition variables
++ enforced structure
+```
+
+Seen in:
+
+* Java
+* High-level runtimes
+
+---
+
+### 🧠 Mindset
+
+> Monitors reduce human error, not performance cost.
+
+---
+
+# 🎯 FINAL MINDSET (this is what you must internalize)
+
+> **Concurrency exists because of preemption and interrupts.
+> Locks exist to prevent corruption.
+> Different locks trade CPU, latency, and simplicity.
+> Deadlock and livelock are bugs caused by design, not by locks.**
+
+---
 # 🎯 Final interview-grade summary (memorize)
 
 > **Locks protect shared kernel data; contention, deadlocks, and livelocks are design problems, not lock failures. Linux uses different locks to balance safety, latency, and performance across preemption and interrupts.**
@@ -650,58 +773,6 @@ Threads run but **do useless work**.
 * No progress
 
 > Livelock = **busy but stuck**
-
----
-
-# 6️⃣ Semaphore — deeper than “counter”
-
-### What semaphore controls
-
-* **Access to resources**, not ownership
-
-### Mental model
-
-> “How many can enter at once?”
-
-### Example
-
-* DB connections pool (N = 10)
-* Only 10 threads can proceed
-
-### Why semaphores are risky
-
-* Easy to misuse
-* Harder to reason than mutexes
-
----
-
-# 7️⃣ Monitor — the structured approach
-
-### What monitor gives you
-
-* Mutual exclusion
-* Condition-based waiting
-
-### Why it exists
-
-Developers kept:
-
-* Forgetting to lock
-* Forgetting to signal
-
-Monitor enforces:
-
-* Lock is always held
-* Conditions are explicit
-
-### Where you see it
-
-* Java `synchronized`
-* High-level concurrency frameworks
-
-### Key insight
-
-> Monitors make concurrency safer by design, not discipline.
 
 ---
 
@@ -1126,78 +1197,7 @@ They are active but stuck.
 
 ---
 
-# 1️⃣2️⃣ Semaphores — counting access
 
-## Mental model
-
-Imagine **10 parking spots**.
-
-Semaphore count = 10.
-
-* Each car enters → count--
-* If count = 0 → wait
-* Car leaves → count++
-
----
-
-## Why semaphore exists
-
-* Control resource pools
-* Not about ownership
-* About **capacity**
-
----
-
-### 🧠 Mindset
-
-> Semaphore controls **how many**, not **who**.
-
----
-
-# 1️⃣3️⃣ Monitor — structured safety
-
-Developers kept:
-
-* Forgetting to lock
-* Forgetting to unlock
-* Forgetting to notify
-
-Monitor enforces:
-
-* Lock always held
-* Conditions explicit
-
----
-
-## Monitor =
-
-```text
-Mutex
-+ condition variables
-+ enforced structure
-```
-
-Seen in:
-
-* Java
-* High-level runtimes
-
----
-
-### 🧠 Mindset
-
-> Monitors reduce human error, not performance cost.
-
----
-
-# 🎯 FINAL MINDSET (this is what you must internalize)
-
-> **Concurrency exists because of preemption and interrupts.
-> Locks exist to prevent corruption.
-> Different locks trade CPU, latency, and simplicity.
-> Deadlock and livelock are bugs caused by design, not by locks.**
-
----
 
 Alright — let’s take these one by one, but with the “from scratch” mindset you want: **what it is, why it exists, and how it shows up in real systems**.
 
