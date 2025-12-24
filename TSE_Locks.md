@@ -15,6 +15,100 @@
 
 Without locks → **race conditions, corruption, crashes**
 
+# 2️⃣ What do *preemption* and *interrupts* mean?
+
+## 🔹 Preemption
+
+> Kernel **forces a running task to stop** so another can run.
+
+* Used by scheduler
+* Improves responsiveness
+* Can happen **any time**
+
+---
+
+## 🔹 Interrupt
+
+> Hardware event that **immediately stops the CPU**.
+
+Examples:
+
+* Network packet arrives
+* Disk IO completes
+* Timer tick
+
+📌 Interrupts can run **in the middle of kernel code**
+
+---
+
+# 2️⃣ Preemption and Interrupts — **why locks must exist**
+
+## 🔹 Preemption (scheduler-driven)
+
+### What it really means
+
+The kernel can **stop a running thread at almost any instruction**.
+
+### Why it happens
+
+* Time slice expired
+* Higher priority task
+* CPU fairness
+
+### Why this is dangerous without locks
+
+Thread A:
+
+* Modifies shared data halfway
+* Gets preempted
+
+Thread B:
+
+* Sees **inconsistent state**
+* Corruption happens
+
+### Key insight
+
+> Preemption makes concurrency unavoidable.
+
+---
+
+## 🔹 Interrupts (hardware-driven)
+
+### What interrupts really are
+
+Hardware saying:
+
+> “Stop what you’re doing NOW.”
+
+Examples:
+
+* Network packet arrives
+* Disk finishes IO
+* Timer fires
+
+### Why interrupts are scary
+
+* Can interrupt **kernel code**
+* Can interrupt **while holding a lock**
+
+### Result
+
+Some locks:
+
+* Must disable interrupts
+* Must be extremely fast
+
+### Key insight
+
+> Interrupts force the kernel to be concurrency-safe at all times.
+
+---
+
+# 🧠 Final deep summary (this is gold)
+
+> **Locks exist because preemption and interrupts make concurrent access unavoidable. Different locks balance safety, latency, and CPU efficiency. Contention, deadlocks, and livelocks are design failures — not lock failures.**
+
 ---
 
 ## Main lock types in Linux (short & clear)
@@ -109,31 +203,7 @@ Below is a **clear, Linux-internals–level explanation**, tuned for **Google / 
 
 ---
 
-# 2️⃣ What do *preemption* and *interrupts* mean?
 
-## 🔹 Preemption
-
-> Kernel **forces a running task to stop** so another can run.
-
-* Used by scheduler
-* Improves responsiveness
-* Can happen **any time**
-
----
-
-## 🔹 Interrupt
-
-> Hardware event that **immediately stops the CPU**.
-
-Examples:
-
-* Network packet arrives
-* Disk IO completes
-* Timer tick
-
-📌 Interrupts can run **in the middle of kernel code**
-
----
 
 # 3️⃣ Are locks the problem or the solution?
 
@@ -417,69 +487,6 @@ Most shared data is:
 
 > RW locks optimize for **read dominance**.
 
----
-
-# 2️⃣ Preemption and Interrupts — **why locks must exist**
-
-## 🔹 Preemption (scheduler-driven)
-
-### What it really means
-
-The kernel can **stop a running thread at almost any instruction**.
-
-### Why it happens
-
-* Time slice expired
-* Higher priority task
-* CPU fairness
-
-### Why this is dangerous without locks
-
-Thread A:
-
-* Modifies shared data halfway
-* Gets preempted
-
-Thread B:
-
-* Sees **inconsistent state**
-* Corruption happens
-
-### Key insight
-
-> Preemption makes concurrency unavoidable.
-
----
-
-## 🔹 Interrupts (hardware-driven)
-
-### What interrupts really are
-
-Hardware saying:
-
-> “Stop what you’re doing NOW.”
-
-Examples:
-
-* Network packet arrives
-* Disk finishes IO
-* Timer fires
-
-### Why interrupts are scary
-
-* Can interrupt **kernel code**
-* Can interrupt **while holding a lock**
-
-### Result
-
-Some locks:
-
-* Must disable interrupts
-* Must be extremely fast
-
-### Key insight
-
-> Interrupts force the kernel to be concurrency-safe at all times.
 
 ---
 
